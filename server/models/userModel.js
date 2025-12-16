@@ -3,6 +3,10 @@ import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
+    removed: {
+      type: Boolean,
+      default: false,
+    },
     fullName: {
       type: String,
       required: true,
@@ -37,8 +41,7 @@ const userSchema = new mongoose.Schema(
 
     profileImageUrl: {
       type: String,
-      default:
-        "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+      default: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
     },
 
     //Google Authentication
