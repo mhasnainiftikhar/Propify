@@ -3,21 +3,20 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { sendEmail } from "../config/nodemailer.js";
+import { errorHandler } from "../middleware/errorHandler.js";
 
-
-   //SIGN UP USER
-
-export const signUpUser = async (req, res) => {
+/* SIGN UP USER*/
+export const signUpUser = async (req, res, next) => {
   try {
     const { fullName, email, password, role = "customer" } = req.body;
 
     if (!fullName || !email || !password) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
+      return next(errorHandler(400, "All fields are required"));
     }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(409).json({ success: false, message: "User already exists" });
+      return next(errorHandler(409, "User already exists"));
     }
 
     let otp = "";
@@ -66,7 +65,7 @@ Propify Team`
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message:
         role === "seller"
@@ -79,30 +78,27 @@ Propify Team`
         role: user.role,
       },
     });
-  } catch (error) {
-    console.error("Signup Error:", error.message);
-    res.status(500).json({ success: false, message: "Server error during signup" });
+  } catch (err) {
+    next(err);
   }
 };
 
-
-   //VERIFY SELLER OTP
-
-export const verifySellerOtp = async (req, res) => {
+/*VERIFY SELLER OTP */
+export const verifySellerOtp = async (req, res, next) => {
   try {
     const { email, otp } = req.body;
 
     const user = await User.findOne({ email, role: "seller" });
     if (!user) {
-      return res.status(404).json({ success: false, message: "Seller not found" });
+      return next(errorHandler(404, "Seller not found"));
     }
 
     if (user.isAccountVerified) {
-      return res.status(400).json({ success: false, message: "Seller already verified" });
+      return next(errorHandler(400, "Seller already verified"));
     }
 
     if (user.verifyOtp !== otp || user.verifyOtpExpireAt < Date.now()) {
-      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
+      return next(errorHandler(400, "Invalid or expired OTP"));
     }
 
     user.isAccountVerified = true;
@@ -110,27 +106,27 @@ export const verifySellerOtp = async (req, res) => {
     user.verifyOtpExpireAt = 0;
     await user.save();
 
-    res.status(200).json({ success: true, message: "Seller verified successfully" });
-  } catch (error) {
-    console.error("Verify OTP Error:", error.message);
-    res.status(500).json({ success: false, message: "OTP verification failed" });
+    res.status(200).json({
+      success: true,
+      message: "Seller verified successfully",
+    });
+  } catch (err) {
+    next(err);
   }
 };
 
-
-   //RESEND OTP (SELLER)
-
-export const resendSellerOtp = async (req, res) => {
+/* RESEND SELLER OTP */
+export const resendSellerOtp = async (req, res, next) => {
   try {
     const { email } = req.body;
 
     const user = await User.findOne({ email, role: "seller" });
     if (!user) {
-      return res.status(404).json({ success: false, message: "Seller not found" });
+      return next(errorHandler(404, "Seller not found"));
     }
 
     if (user.isAccountVerified) {
-      return res.status(400).json({ success: false, message: "Seller already verified" });
+      return next(errorHandler(400, "Seller already verified"));
     }
 
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -144,34 +140,32 @@ export const resendSellerOtp = async (req, res) => {
       `Your new OTP is: ${otp}\nIt expires in 10 minutes.`
     );
 
-    res.status(200).json({ success: true, message: "OTP resent successfully" });
-  } catch (error) {
-    console.error("Resend OTP Error:", error.message);
-    res.status(500).json({ success: false, message: "Failed to resend OTP" });
+    res.status(200).json({
+      success: true,
+      message: "OTP resent successfully",
+    });
+  } catch (err) {
+    next(err);
   }
 };
 
-
-  //LOGIN USER
-export const loginUser = async (req, res) => {
+/* LOGIN USER */
+export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
+      return next(errorHandler(401, "Invalid credentials"));
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
+      return next(errorHandler(401, "Invalid credentials"));
     }
 
     if (user.role === "seller" && !user.isAccountVerified) {
-      return res.status(403).json({
-        success: false,
-        message: "Verify your seller account first",
-      });
+      return next(errorHandler(403, "Verify your seller account first"));
     }
 
     const token = jwt.sign(
@@ -197,33 +191,32 @@ export const loginUser = async (req, res) => {
         role: user.role,
       },
     });
-  } catch (error) {
-    console.error("Login Error:", error.message);
-    res.status(500).json({ success: false, message: "Login failed" });
+  } catch (err) {
+    next(err);
   }
 };
 
-
-   //LOGOUT USER
+/*LOGOUT USER */
 export const logoutUser = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     sameSite: "strict",
   });
 
-  res.status(200).json({ success: true, message: "Logged out successfully" });
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
 };
 
-
-  // FORGOT PASSWORD (OTP)
-
-export const forgotPassword = async (req, res) => {
+/* FORGOT PASSWORD*/
+export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return next(errorHandler(404, "User not found"));
     }
 
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -237,17 +230,17 @@ export const forgotPassword = async (req, res) => {
       `Your password reset OTP is: ${otp}\nExpires in 10 minutes.`
     );
 
-    res.status(200).json({ success: true, message: "OTP sent to email" });
-  } catch (error) {
-    console.error("Forgot Password Error:", error.message);
-    res.status(500).json({ success: false, message: "Failed to send reset OTP" });
+    res.status(200).json({
+      success: true,
+      message: "OTP sent to email",
+    });
+  } catch (err) {
+    next(err);
   }
 };
 
-
-   //RESET PASSWORD
-
-export const resetPassword = async (req, res) => {
+/*RESET PASSWORD*/
+export const resetPassword = async (req, res, next) => {
   try {
     const { email, otp, newPassword } = req.body;
 
@@ -257,7 +250,7 @@ export const resetPassword = async (req, res) => {
       user.resetOtp !== otp ||
       user.resetOtpExpireAt < Date.now()
     ) {
-      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
+      return next(errorHandler(400, "Invalid or expired OTP"));
     }
 
     user.password = newPassword;
@@ -265,9 +258,11 @@ export const resetPassword = async (req, res) => {
     user.resetOtpExpireAt = 0;
     await user.save();
 
-    res.status(200).json({ success: true, message: "Password reset successful" });
-  } catch (error) {
-    console.error("Reset Password Error:", error.message);
-    res.status(500).json({ success: false, message: "Password reset failed" });
+    res.status(200).json({
+      success: true,
+      message: "Password reset successful",
+    });
+  } catch (err) {
+    next(err);
   }
 };
