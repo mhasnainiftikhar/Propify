@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import assets  from '../assets/cover3.jpg'; 
-import logo  from '../assets/logo.png'; 
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import assets from "../assets/cover3.jpg";
+import logo from "../assets/logo.png";
+import OAuth from "../components/OAuth";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -19,11 +20,10 @@ const SignIn = () => {
 
   return (
     <div className="min-h-screen w-full flex bg-white ">
-      
       {/* LEFT SIDE: VISUAL SECTION (Matches SignUp) */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-blue-600">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-blue-400">
         <img
-          src={assets} 
+          src={assets}
           alt="Login Visual"
           className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-70"
         />
@@ -35,7 +35,8 @@ const SignIn = () => {
             Welcome Back to <br /> Propify.
           </h2>
           <p className="text-lg text-blue-100 max-w-md">
-            Log in to manage your properties, track your leads, and continue your journey in our marketplace.
+            Log in to manage your properties, track your leads, and continue
+            your journey in our marketplace.
           </p>
         </div>
         <div className="absolute bottom-10 left-10 text-blue-200 text-sm">
@@ -48,7 +49,9 @@ const SignIn = () => {
         <div className="w-full max-w-md">
           <div className="mb-10">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h1>
-            <p className="text-gray-500">Please enter your details to access your account.</p>
+            <p className="text-gray-500">
+              Please enter your details to access your account.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -68,8 +71,13 @@ const SignIn = () => {
 
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-gray-700">Password</label>
-                <button type="button" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+                <label className="text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+                >
                   Forgot password?
                 </button>
               </div>
@@ -89,7 +97,10 @@ const SignIn = () => {
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
               />
-              <label htmlFor="remember" className="ml-2 block text-sm text-gray-600 cursor-pointer">
+              <label
+                htmlFor="remember"
+                className="ml-2 block text-sm text-gray-600 cursor-pointer"
+              >
                 Remember me for 30 days
               </label>
             </div>
@@ -105,12 +116,30 @@ const SignIn = () => {
 
           <div className="mt-8 text-center text-sm text-gray-600">
             Don't have an account?{" "}
-            <button 
-              onClick={() => navigate("/sign-up")} 
+            <button
+              onClick={() => navigate("/sign-up")}
               className="text-blue-600 font-semibold hover:underline"
             >
               Create an account
             </button>
+            <div className="mt-8 pt-8 border-t border-gray-100 w-full">
+              <div className="relative mb-6">
+                <div
+                  className="absolute inset-0 flex items-center"
+                  aria-hidden="true"
+                >
+                  <div className="w-full border-t border-gray-200"></div>
+                </div>
+                <div className="relative flex justify-center text-sm uppercase">
+                  <span className="bg-white px-4 text-gray-400 font-medium tracking-wider">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-center w-full">
+                <OAuth />
+              </div>
+            </div>
           </div>
         </div>
       </div>

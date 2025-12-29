@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signupUser, verifySellerOtp } from "../services/authService";
-import assets from '../assets/cover2.jpg'
-import logo from '../assets/logo.png'
-
+import assets from "../assets/cover2.jpg";
+import logo from "../assets/logo.png";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -24,9 +24,11 @@ const SignUp = () => {
     const newErrors = {};
     if (!form.fullName.trim()) newErrors.fullName = "Full name is required";
     if (!form.email.trim()) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = "Invalid email address";
+    else if (!/\S+@\S+\.\S+/.test(form.email))
+      newErrors.email = "Invalid email address";
     if (!form.password) newErrors.password = "Password is required";
-    else if (form.password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    else if (form.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -63,38 +65,36 @@ const SignUp = () => {
   return (
     <div className="min-h-screen w-full flex bg-white">
       {/* LEFT SIDE: THE IMAGE/VISUAL */}
-<div className="hidden lg:flex lg:w-1/2 relative bg-blue-400">
-  <img
-    src={assets} 
-    alt="Signup Visual"
-    className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-80"
-  />
-  <div className="relative z-10 flex flex-col justify-center px-20 text-white">
-    <div className="mb-10">
-      <img 
-        src={logo} 
-        alt="Propify Logo" 
-        className="h-19 w-auto" 
-      />
-    </div>
-    <h2 className="text-4xl font-bold mb-4 leading-tight">
-      Start your journey <br /> with our community.
-    </h2> 
-    <p className="text-lg text-blue-50 max-w-md opacity-90">
-      Discover the best marketplace experience for both buyers and sellers. 
-      Join thousands of users today.
-    </p>
-  </div>
-  <div className="absolute bottom-10 left-10 text-blue-100 text-sm font-medium">
-    © 2025 Propify.
-  </div>
-</div>
+      <div className="hidden lg:flex lg:w-1/2 relative bg-blue-400">
+        <img
+          src={assets}
+          alt="Signup Visual"
+          className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-80"
+        />
+        <div className="relative z-10 flex flex-col justify-center px-20 text-white">
+          <div className="mb-10">
+            <img src={logo} alt="Propify Logo" className="h-19 w-auto" />
+          </div>
+          <h2 className="text-4xl font-bold mb-4 leading-tight">
+            Start your journey <br /> with our community.
+          </h2>
+          <p className="text-lg text-blue-50 max-w-md opacity-90">
+            Discover the best marketplace experience for both buyers and
+            sellers. Join thousands of users today.
+          </p>
+        </div>
+        <div className="absolute bottom-10 left-10 text-blue-100 text-sm font-medium">
+          © 2025 Propify.
+        </div>
+      </div>
 
       {/* RIGHT SIDE: THE FORM */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-20">
         <div className="w-full max-w-md">
           <div className="mb-10">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Create Account
+            </h1>
             <p className="text-gray-500">Enter your details to get started.</p>
           </div>
 
@@ -106,49 +106,69 @@ const SignUp = () => {
 
           <form onSubmit={handleSignup} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name
+              </label>
               <input
                 type="text"
                 placeholder="John Doe"
                 className={`w-full border rounded-lg px-4 py-3 transition focus:ring-2 focus:ring-blue-500 outline-none ${
-                  errors.fullName ? "border-red-500" : "border-gray-300 focus:border-blue-500"
+                  errors.fullName
+                    ? "border-red-500"
+                    : "border-gray-300 focus:border-blue-500"
                 }`}
                 value={form.fullName}
                 onChange={(e) => setForm({ ...form, fullName: e.target.value })}
               />
-              {errors.fullName && <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>}
+              {errors.fullName && (
+                <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>
+              )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address
+              </label>
               <input
                 type="email"
                 placeholder="name@company.com"
                 className={`w-full border rounded-lg px-4 py-3 transition focus:ring-2 focus:ring-blue-500 outline-none ${
-                  errors.email ? "border-red-500" : "border-gray-300 focus:border-blue-500"
+                  errors.email
+                    ? "border-red-500"
+                    : "border-gray-300 focus:border-blue-500"
                 }`}
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
-              {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+              )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
               <input
                 type="password"
                 placeholder="••••••••"
                 className={`w-full border rounded-lg px-4 py-3 transition focus:ring-2 focus:ring-blue-500 outline-none ${
-                  errors.password ? "border-red-500" : "border-gray-300 focus:border-blue-500"
+                  errors.password
+                    ? "border-red-500"
+                    : "border-gray-300 focus:border-blue-500"
                 }`}
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
-              {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-600">{errors.password}</p>
+              )}
             </div>
 
             <div className="pt-2">
-              <span className="block text-sm font-medium text-gray-700 mb-3">I am a:</span>
+              <span className="block text-sm font-medium text-gray-700 mb-3">
+                I am a:
+              </span>
               <div className="flex gap-4">
                 <button
                   type="button"
@@ -186,10 +206,31 @@ const SignUp = () => {
 
           <p className="mt-8 text-center text-sm text-gray-600">
             Already have an account?{" "}
-            <button onClick={() => navigate("/sign-in")} className="text-blue-600 font-semibold hover:underline">
+            <button
+              onClick={() => navigate("/sign-in")}
+              className="text-blue-600 font-semibold hover:underline"
+            >
               Log in
             </button>
           </p>
+          <div className="mt-8 pt-8 border-t border-gray-100">
+            <div className="relative mb-6">
+              <div
+                className="absolute inset-0 flex items-center"
+                aria-hidden="true"
+              >
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm uppercase">
+                <span className="bg-white px-4 text-gray-400 font-medium tracking-wider">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <OAuth />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -197,11 +238,17 @@ const SignUp = () => {
       {showOtp && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
           <div className="bg-white p-8 rounded-2xl w-full max-w-sm shadow-2xl animate-in fade-in zoom-in duration-200">
-            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">Verify Identity</h2>
-            <p className="text-sm text-gray-500 text-center mb-6">Enter the 6-digit code sent to your email.</p>
+            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
+              Verify Identity
+            </h2>
+            <p className="text-sm text-gray-500 text-center mb-6">
+              Enter the 6-digit code sent to your email.
+            </p>
 
             {errors.otp && (
-              <p className="text-sm text-red-600 text-center mb-4">{errors.otp}</p>
+              <p className="text-sm text-red-600 text-center mb-4">
+                {errors.otp}
+              </p>
             )}
 
             <input
