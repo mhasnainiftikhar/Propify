@@ -108,14 +108,14 @@ const Header = () => {
 
           {/* Login Button */}
           <Link
-            to="/sign-up"
+            to="/sign-in"
             className={`px-4 lg:px-5 py-2 lg:py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-lg whitespace-nowrap ${
               scrolled 
                 ? 'bg-black text-white hover:bg-gray-800' 
                 : 'bg-white text-black hover:bg-gray-100'
             }`}
           >
-            Login
+            Sign In
           </Link>
         </div>
       </div>
