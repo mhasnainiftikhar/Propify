@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice";
 import { loginUser } from "../services/authService";
 import assets from "../assets/cover3.jpg";
 import logo from "../assets/logo.png";
@@ -7,23 +9,21 @@ import OAuth from "../components/OAuth";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.user);
 
   const [form, setForm] = useState({ email: "", password: "" });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setIsLoading(true);
+    dispatch(signInStart());
     try {
       const data = await loginUser(form);
       localStorage.setItem("token", data.token);
+      dispatch(signInSuccess(data.user));
       navigate(data.user.role === "seller" ? "/seller/dashboard" : "/");
     } catch (err) {
-      setError("Invalid email or password");
-    } finally {
-      setIsLoading(false);
+      dispatch(signInFailure(err?.response?.data?.message || "Invalid email or password"));
     }
   };
 
@@ -81,10 +81,10 @@ const SignIn = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={loading}
               className="w-full bg-gray-900 text-white py-3.5 rounded-lg font-semibold hover:bg-black transition-all active:scale-[0.98] disabled:opacity-70 shadow-sm"
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 

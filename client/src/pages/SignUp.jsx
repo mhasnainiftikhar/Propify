@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice";
 import { signupUser, verifySellerOtp, resendSellerOtp } from "../services/authService";
 import assets from "../assets/cover2.jpg";
 import logo from "../assets/logo.png";
@@ -8,6 +10,8 @@ import OtpModal from "../components/OtpModal";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error: reduxError } = useSelector((state) => state.user);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -18,7 +22,6 @@ const SignUp = () => {
 
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
@@ -34,7 +37,7 @@ const SignUp = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    setIsLoading(true);
+    dispatch(signInStart());
     setErrors({});
     try {
       const data = await signupUser(form);
@@ -42,25 +45,25 @@ const SignUp = () => {
         setShowOtp(true);
       } else {
         localStorage.setItem("token", data.token);
+        dispatch(signInSuccess(data.user));
         navigate("/");
       }
     } catch (err) {
+      dispatch(signInFailure(err?.response?.data?.message || "Signup failed"));
       setErrors({ submit: err?.response?.data?.message || "Signup failed" });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
-    setIsLoading(true);
+    dispatch(signInStart());
     try {
       const data = await verifySellerOtp({ email: form.email, otp });
       localStorage.setItem("token", data.token);
+      dispatch(signInSuccess(data.user));
       navigate("/seller/dashboard");
-    } catch {
+    } catch (err) {
+      dispatch(signInFailure(err?.response?.data?.message || "Invalid or expired OTP"));
       setErrors({ otp: "Invalid or expired OTP" });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -134,11 +137,10 @@ const SignUp = () => {
                   key={r}
                   type="button"
                   onClick={() => setForm({ ...form, role: r })}
-                  className={`flex-1 py-3 rounded-lg border font-semibold capitalize transition-all ${
-                    form.role === r
-                      ? "bg-blue-600 border-blue-600 text-white shadow-md"
-                      : "bg-white text-gray-600 border-gray-200 hover:border-blue-300"
-                  }`}
+                  className={`flex-1 py-3 rounded-lg border font-semibold capitalize transition-all ${form.role === r
+                    ? "bg-blue-600 border-blue-600 text-white shadow-md"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-blue-300"
+                    }`}
                 >
                   {r}
                 </button>
@@ -147,10 +149,10 @@ const SignUp = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={loading}
               className="w-full bg-gray-900 text-white py-3.5 rounded-lg font-semibold hover:bg-black transition-all active:scale-[0.98] disabled:opacity-70 mt-2"
             >
-              {isLoading ? "Creating..." : "Create Account"}
+              {loading ? "Creating..." : "Create Account"}
             </button>
           </form>
 
@@ -183,7 +185,7 @@ const SignUp = () => {
           setOtp={setOtp}
           onVerify={handleVerifyOtp}
           onResend={handleResendOtp}
-          isLoading={isLoading}
+          isLoading={loading}
           error={errors.otp}
           onClose={() => setShowOtp(false)}
         />
