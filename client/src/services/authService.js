@@ -42,3 +42,9 @@ export const resetPassword = async (data) => {
   const res = await axiosInstance.post(API_PATHS.AUTH.RESET_PASSWORD, data);
   return res.data;
 };
+
+// GOOGLE AUTH
+export const googleAuth = async (data) => {
+  const res = await axiosInstance.post(API_PATHS.AUTH.GOOGLE_AUTH, data);
+  return res.data;
+};

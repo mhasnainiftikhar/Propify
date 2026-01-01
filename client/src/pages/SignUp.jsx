@@ -71,6 +71,11 @@ const SignUp = () => {
     await resendSellerOtp({ email: form.email });
   };
 
+  const handleGoogleOtpRequired = (email) => {
+    setForm({ ...form, email: email });
+    setShowOtp(true);
+  };
+
   return (
     <div className="min-h-screen w-full flex bg-white ">
       {/* LEFT SIDE: VISUAL */}
@@ -163,7 +168,7 @@ const SignUp = () => {
               <span className="relative bg-white px-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Or Register with</span>
             </div>
             <div className="flex justify-center">
-              <OAuth />
+              <OAuth role={form.role} onOtpRequired={handleGoogleOtpRequired} />
             </div>
           </div>
 

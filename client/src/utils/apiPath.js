@@ -3,6 +3,7 @@ const API_PATHS = {
     SIGNUP: "/api/auth/signup",
     LOGIN: "/api/auth/login",
     LOGOUT: "/api/auth/logout",
+    GOOGLE_AUTH: "/api/auth/google",
 
     VERIFY_OTP: "/api/auth/verify-otp",
     RESEND_OTP: "/api/auth/resend-otp",

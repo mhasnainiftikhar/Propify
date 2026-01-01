@@ -7,6 +7,7 @@ import {
   resendSellerOtp,
   forgotPassword,
   resetPassword,
+  googleAuth,
 } from "../controllers/authController.js";
 
 const router = express.Router();
@@ -15,6 +16,7 @@ const router = express.Router();
 router.post("/signup", signUpUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
+router.post("/google", googleAuth);
 
 // Seller OTP
 router.post("/verify-otp", verifySellerOtp);
