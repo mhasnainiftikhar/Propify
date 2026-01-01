@@ -1,19 +1,44 @@
-import axiosInstance from "../utils/axiosInstance.js";
-import API_PATHS from "../utils/apiPath.js";
+import axiosInstance from "../utils/axiosInstance";
+import API_PATHS from "../utils/apiPath";
 
-export const signupUser = async (formData) => {
-  const response = await axiosInstance.post(
-    API_PATHS.AUTH.SIGNUP,
-    formData
-  );
-  return response.data;
+// SIGNUP
+export const signupUser = async (data) => {
+  const res = await axiosInstance.post(API_PATHS.AUTH.SIGNUP, data);
+  return res.data;
 };
 
-//VERIFY SELLER OTP
-export const verifySellerOtp = async (otpData) => {
-  const response = await axiosInstance.post(
-    API_PATHS.AUTH.VERIFY_OTP,
-    otpData
-  );
-  return response.data;
+// LOGIN
+export const loginUser = async (data) => {
+  const res = await axiosInstance.post(API_PATHS.AUTH.LOGIN, data);
+  return res.data;
+};
+
+// LOGOUT
+export const logoutUser = async () => {
+  const res = await axiosInstance.post(API_PATHS.AUTH.LOGOUT);
+  return res.data;
+};
+
+// VERIFY SELLER OTP
+export const verifySellerOtp = async (data) => {
+  const res = await axiosInstance.post(API_PATHS.AUTH.VERIFY_OTP, data);
+  return res.data;
+};
+
+// RESEND SELLER OTP
+export const resendSellerOtp = async (data) => {
+  const res = await axiosInstance.post(API_PATHS.AUTH.RESEND_OTP, data);
+  return res.data;
+};
+
+// FORGOT PASSWORD
+export const forgotPassword = async (data) => {
+  const res = await axiosInstance.post(API_PATHS.AUTH.FORGOT_PASSWORD, data);
+  return res.data;
+};
+
+// RESET PASSWORD
+export const resetPassword = async (data) => {
+  const res = await axiosInstance.post(API_PATHS.AUTH.RESET_PASSWORD, data);
+  return res.data;
 };

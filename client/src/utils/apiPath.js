@@ -2,13 +2,13 @@ const API_PATHS = {
   AUTH: {
     SIGNUP: "/api/auth/signup",
     LOGIN: "/api/auth/login",
+    LOGOUT: "/api/auth/logout",
+
     VERIFY_OTP: "/api/auth/verify-otp",
     RESEND_OTP: "/api/auth/resend-otp",
-    LOGOUT: "/api/auth/logout",
-  },
 
-  USER: {
-    PROFILE: "/api/user/profile",
+    FORGOT_PASSWORD: "/api/auth/forgot-password",
+    RESET_PASSWORD: "/api/auth/reset-password",
   },
 };
 

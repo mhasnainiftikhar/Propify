@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signupUser, verifySellerOtp } from "../services/authService";
+import { signupUser, verifySellerOtp, resendSellerOtp } from "../services/authService";
 import assets from "../assets/cover2.jpg";
 import logo from "../assets/logo.png";
 import OAuth from "../components/OAuth";
+import OtpModal from "../components/OtpModal";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [showOtp, setShowOtp] = useState(false);
-  const [otp, setOtp] = useState("");
 
   const [form, setForm] = useState({
     fullName: "",
@@ -19,32 +16,36 @@ const SignUp = () => {
     role: "customer",
   });
 
-  /* -------------------- VALIDATION -------------------- */
-  const validateForm = () => {
-    const newErrors = {};
-    if (!form.fullName.trim()) newErrors.fullName = "Full name is required";
-    if (!form.email.trim()) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(form.email))
-      newErrors.email = "Invalid email address";
-    if (!form.password) newErrors.password = "Password is required";
-    else if (form.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
+  const [otp, setOtp] = useState("");
+  const [showOtp, setShowOtp] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateForm = () => {
+    const e = {};
+    if (!form.fullName.trim()) e.fullName = "Full name is required";
+    if (!form.email.trim()) e.email = "Email is required";
+    if (!form.password || form.password.length < 6)
+      e.password = "Password must be at least 6 characters";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  /* -------------------- HANDLERS -------------------- */
   const handleSignup = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsLoading(true);
+    setErrors({});
     try {
-      await signupUser(form);
-      if (form.role === "seller") setShowOtp(true);
-      else navigate("/");
+      const data = await signupUser(form);
+      if (form.role === "seller") {
+        setShowOtp(true);
+      } else {
+        localStorage.setItem("token", data.token);
+        navigate("/");
+      }
     } catch (err) {
-      setErrors({ submit: "Signup failed. Please try again." });
+      setErrors({ submit: err?.response?.data?.message || "Signup failed" });
     } finally {
       setIsLoading(false);
     }
@@ -53,48 +54,47 @@ const SignUp = () => {
   const handleVerifyOtp = async () => {
     setIsLoading(true);
     try {
-      await verifySellerOtp({ email: form.email, otp });
+      const data = await verifySellerOtp({ email: form.email, otp });
+      localStorage.setItem("token", data.token);
       navigate("/seller/dashboard");
-    } catch (err) {
+    } catch {
       setErrors({ otp: "Invalid or expired OTP" });
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleResendOtp = async () => {
+    await resendSellerOtp({ email: form.email });
+  };
+
   return (
-    <div className="min-h-screen w-full flex bg-white">
-      {/* LEFT SIDE: THE IMAGE/VISUAL */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-blue-400">
+    <div className="min-h-screen w-full flex bg-white ">
+      {/* LEFT SIDE: VISUAL */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-blue-300">
         <img
           src={assets}
-          alt="Signup Visual"
+          alt="Signup"
           className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-80"
         />
         <div className="relative z-10 flex flex-col justify-center px-20 text-white">
           <div className="mb-10">
-            <img src={logo} alt="Propify Logo" className="h-19 w-auto" />
+            <img src={logo} alt="Propify" className="h-19 w-auto" />
           </div>
           <h2 className="text-4xl font-bold mb-4 leading-tight">
-            Start your journey <br /> with our community.
+            Start your journey <br /> with Propify.
           </h2>
-          <p className="text-lg text-blue-50 max-w-md opacity-90">
-            Discover the best marketplace experience for both buyers and
-            sellers. Join thousands of users today.
+          <p className="text-lg text-blue-50 max-w-md opacity-90 leading-relaxed">
+            Join the trusted marketplace for buyers and sellers today.
           </p>
-        </div>
-        <div className="absolute bottom-10 left-10 text-blue-100 text-sm font-medium">
-          © 2025 Propify.
         </div>
       </div>
 
-      {/* RIGHT SIDE: THE FORM */}
+      {/* RIGHT SIDE: FORM */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-20">
         <div className="w-full max-w-md">
           <div className="mb-10">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Create Account
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
             <p className="text-gray-500">Enter your details to get started.</p>
           </div>
 
@@ -104,179 +104,89 @@ const SignUp = () => {
             </div>
           )}
 
-          <form onSubmit={handleSignup} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                placeholder="John Doe"
-                className={`w-full border rounded-lg px-4 py-3 transition focus:ring-2 focus:ring-blue-500 outline-none ${
-                  errors.fullName
-                    ? "border-red-500"
-                    : "border-gray-300 focus:border-blue-500"
-                }`}
-                value={form.fullName}
-                onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-              />
-              {errors.fullName && (
-                <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>
-              )}
-            </div>
+          <form onSubmit={handleSignup} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Full Name"
+              className={`w-full border px-4 py-3 rounded-lg outline-none transition ${errors.fullName ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
+              value={form.fullName}
+              onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+            />
+            <input
+              type="email"
+              placeholder="Email Address"
+              className={`w-full border px-4 py-3 rounded-lg outline-none transition ${errors.email ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className={`w-full border px-4 py-3 rounded-lg outline-none transition ${errors.password ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="name@company.com"
-                className={`w-full border rounded-lg px-4 py-3 transition focus:ring-2 focus:ring-blue-500 outline-none ${
-                  errors.email
-                    ? "border-red-500"
-                    : "border-gray-300 focus:border-blue-500"
-                }`}
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-600">{errors.email}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                className={`w-full border rounded-lg px-4 py-3 transition focus:ring-2 focus:ring-blue-500 outline-none ${
-                  errors.password
-                    ? "border-red-500"
-                    : "border-gray-300 focus:border-blue-500"
-                }`}
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-              />
-              {errors.password && (
-                <p className="mt-1 text-xs text-red-600">{errors.password}</p>
-              )}
-            </div>
-
-            <div className="pt-2">
-              <span className="block text-sm font-medium text-gray-700 mb-3">
-                I am a:
-              </span>
-              <div className="flex gap-4">
+            {/* ROLE TOGGLE */}
+            <div className="flex gap-4 pt-2">
+              {["customer", "seller"].map((r) => (
                 <button
+                  key={r}
                   type="button"
-                  onClick={() => setForm({ ...form, role: "customer" })}
-                  className={`flex-1 py-3 rounded-lg border font-medium transition ${
-                    form.role === "customer"
+                  onClick={() => setForm({ ...form, role: r })}
+                  className={`flex-1 py-3 rounded-lg border font-semibold capitalize transition-all ${
+                    form.role === r
                       ? "bg-blue-600 border-blue-600 text-white shadow-md"
-                      : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                      : "bg-white text-gray-600 border-gray-200 hover:border-blue-300"
                   }`}
                 >
-                  Customer
+                  {r}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setForm({ ...form, role: "seller" })}
-                  className={`flex-1 py-3 rounded-lg border font-medium transition ${
-                    form.role === "seller"
-                      ? "bg-blue-600 border-blue-600 text-white shadow-md"
-                      : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-                  }`}
-                >
-                  Seller
-                </button>
-              </div>
+              ))}
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-black transition-all active:scale-[0.98] disabled:opacity-70 mt-4"
+              className="w-full bg-gray-900 text-white py-3.5 rounded-lg font-semibold hover:bg-black transition-all active:scale-[0.98] disabled:opacity-70 mt-2"
             >
-              {isLoading ? "Processing..." : "Create Account"}
+              {isLoading ? "Creating..." : "Create Account"}
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm text-gray-600">
-            Already have an account?{" "}
-            <button
-              onClick={() => navigate("/sign-in")}
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Log in
-            </button>
-          </p>
+          {/* OAUTH SECTION */}
           <div className="mt-8 pt-8 border-t border-gray-100">
-            <div className="relative mb-6">
-              <div
-                className="absolute inset-0 flex items-center"
-                aria-hidden="true"
-              >
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center text-sm uppercase">
-                <span className="bg-white px-4 text-gray-400 font-medium tracking-wider">
-                  Or continue with
-                </span>
-              </div>
+            <div className="relative mb-6 text-center">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+              <span className="relative bg-white px-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Or Register with</span>
             </div>
             <div className="flex justify-center">
               <OAuth />
             </div>
           </div>
+
+          <p className="mt-8 text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <button
+              onClick={() => navigate("/sign-in")}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              Sign In
+            </button>
+          </p>
         </div>
       </div>
 
-      {/* OTP MODAL */}
       {showOtp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-          <div className="bg-white p-8 rounded-2xl w-full max-w-sm shadow-2xl animate-in fade-in zoom-in duration-200">
-            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
-              Verify Identity
-            </h2>
-            <p className="text-sm text-gray-500 text-center mb-6">
-              Enter the 6-digit code sent to your email.
-            </p>
-
-            {errors.otp && (
-              <p className="text-sm text-red-600 text-center mb-4">
-                {errors.otp}
-              </p>
-            )}
-
-            <input
-              type="text"
-              maxLength={6}
-              placeholder="0 0 0 0 0 0"
-              className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-2xl tracking-[0.5em] font-mono text-center focus:border-blue-500 outline-none transition"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
-
-            <div className="flex gap-3 mt-8">
-              <button
-                onClick={() => setShowOtp(false)}
-                className="flex-1 py-3 rounded-xl border border-gray-200 font-semibold text-gray-600 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleVerifyOtp}
-                disabled={otp.length !== 6 || isLoading}
-                className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 disabled:opacity-50"
-              >
-                Verify
-              </button>
-            </div>
-          </div>
-        </div>
+        <OtpModal
+          otp={otp}
+          setOtp={setOtp}
+          onVerify={handleVerifyOtp}
+          onResend={handleResendOtp}
+          isLoading={isLoading}
+          error={errors.otp}
+          onClose={() => setShowOtp(false)}
+        />
       )}
     </div>
   );
