@@ -7,6 +7,7 @@ import assets from "../assets/cover2.jpg";
 import logo from "../assets/logo.png";
 import OAuth from "../components/OAuth";
 import OtpModal from "../components/OtpModal";
+import ProfilePictureUpload from "../components/ProfilePictureUpload";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const SignUp = () => {
     fullName: "",
     email: "",
     password: "",
+    profileImageUrl: "",
     role: "customer",
   });
 
@@ -100,10 +102,16 @@ const SignUp = () => {
 
       {/* RIGHT SIDE: FORM */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-20">
-        <div className="w-full max-w-md">
-          <div className="mb-10">
+        <div className="w-full max-w-lg">
+          <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
             <p className="text-gray-500">Enter your details to get started.</p>
+          </div>
+
+          <div className="flex justify-center mb-6">
+            <ProfilePictureUpload
+              onUploadSuccess={(url) => setForm({ ...form, profileImageUrl: url })}
+            />
           </div>
 
           {errors.submit && (
@@ -113,20 +121,22 @@ const SignUp = () => {
           )}
 
           <form onSubmit={handleSignup} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Full Name"
-              className={`w-full border px-4 py-3 rounded-lg outline-none transition ${errors.fullName ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
-              value={form.fullName}
-              onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-            />
-            <input
-              type="email"
-              placeholder="Email Address"
-              className={`w-full border px-4 py-3 rounded-lg outline-none transition ${errors.email ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                type="text"
+                placeholder="Full Name"
+                className={`w-full border px-4 py-3 rounded-lg outline-none transition ${errors.fullName ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
+                value={form.fullName}
+                onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+              />
+              <input
+                type="email"
+                placeholder="Email Address"
+                className={`w-full border px-4 py-3 rounded-lg outline-none transition ${errors.email ? 'border-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'}`}
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
             <input
               type="password"
               placeholder="Password"

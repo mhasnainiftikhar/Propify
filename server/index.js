@@ -20,6 +20,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Serve static files for uploaded images
+app.use("/uploads", express.static("uploads"));
+
 /* -------------------- DATABASE -------------------- */
 connectDB();
 

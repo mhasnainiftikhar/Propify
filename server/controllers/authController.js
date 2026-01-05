@@ -28,7 +28,7 @@ const createToken = (res, user) => {
 
 export const signUpUser = async (req, res, next) => {
   try {
-    const { fullName, email, password, role = "customer" } = req.body;
+    const { fullName, email, password, profileImageUrl, role = "customer" } = req.body;
 
     if (!fullName || !email || !password) {
       return next(errorHandler(400, "All fields are required"));
@@ -53,6 +53,7 @@ export const signUpUser = async (req, res, next) => {
       fullName,
       email,
       password,
+      profileImageUrl,
       role,
       verifyOtp,
       verifyOtpExpireAt,
@@ -363,6 +364,45 @@ export const googleAuth = async (req, res, next) => {
         },
       });
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+//UPLOAD PROFILE PICTURE
+
+export const uploadProfilePicture = async (req, res, next) => {
+  try {
+    // Check if user is authenticated (you'll need to add auth middleware)
+    if (!req.user) {
+      return next(errorHandler(401, "Please login to upload profile picture"));
+    }
+
+    // Check if file was uploaded
+    if (!req.file) {
+      return next(errorHandler(400, "Please upload an image file"));
+    }
+
+    // Get the file path
+    const profileImageUrl = `/uploads/profiles/${req.file.filename}`;
+
+    // Update user's profile image
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { profileImageUrl },
+      { new: true }
+    );
+
+    if (!user) {
+      return next(errorHandler(404, "User not found"));
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Profile picture uploaded successfully",
+      profileImageUrl: user.profileImageUrl,
+    });
   } catch (err) {
     next(err);
   }

@@ -8,7 +8,10 @@ import {
   forgotPassword,
   resetPassword,
   googleAuth,
+  uploadProfilePicture,
 } from "../controllers/authController.js";
+import { upload } from "../config/multerConfig.js";
+import { authenticate } from "../middleware/authenticate.js";
 
 const router = express.Router();
 
@@ -25,5 +28,8 @@ router.post("/resend-otp", resendSellerOtp);
 // Password reset
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
+
+// Profile picture upload (protected route)
+router.post("/upload-profile-picture", authenticate, upload.single("profilePicture"), uploadProfilePicture);
 
 export default router;

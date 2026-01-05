@@ -10,6 +10,8 @@ const API_PATHS = {
 
     FORGOT_PASSWORD: "/api/auth/forgot-password",
     RESET_PASSWORD: "/api/auth/reset-password",
+
+    UPLOAD_PROFILE_PICTURE: "/api/auth/upload-profile-picture",
   },
 };
 
