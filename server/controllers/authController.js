@@ -319,6 +319,15 @@ export const googleAuth = async (req, res, next) => {
         return next(errorHandler(403, "Verify seller account first"));
       }
 
+      // Update profile image if it reflects the default
+      if (user.profileImageUrl === "https://cdn-icons-png.flaticon.com/512/847/847969.png" || !user.isGoogleAuth) {
+        if (user.profileImageUrl === "https://cdn-icons-png.flaticon.com/512/847/847969.png") {
+          user.profileImageUrl = photoURL;
+        }
+        user.isGoogleAuth = true;
+        await user.save();
+      }
+
       createToken(res, user);
 
       return res.status(200).json({
@@ -329,7 +338,7 @@ export const googleAuth = async (req, res, next) => {
           fullName: user.fullName,
           email: user.email,
           role: user.role,
-          photoURL: user.photoURL,
+          profileImageUrl: user.profileImageUrl,
         },
       });
     }
@@ -348,7 +357,8 @@ export const googleAuth = async (req, res, next) => {
     user = await User.create({
       fullName,
       email,
-      photoURL,
+      profileImageUrl: photoURL,
+      isGoogleAuth: true,
       role,
       password: crypto.randomBytes(32).toString("hex"), // Random password for OAuth users
       verifyOtp,
@@ -372,7 +382,7 @@ export const googleAuth = async (req, res, next) => {
           fullName: user.fullName,
           email: user.email,
           role: user.role,
-          photoURL: user.photoURL,
+          profileImageUrl: user.profileImageUrl,
         },
       });
     } else {
@@ -386,7 +396,6 @@ export const googleAuth = async (req, res, next) => {
           fullName: user.fullName,
           email: user.email,
           role: user.role,
-          photoURL: user.photoURL,
           profileImageUrl: user.profileImageUrl,
         },
       });
@@ -396,42 +405,4 @@ export const googleAuth = async (req, res, next) => {
   }
 };
 
-
-//UPLOAD PROFILE PICTURE
-
-export const uploadProfilePicture = async (req, res, next) => {
-  try {
-    // Check if user is authenticated (you'll need to add auth middleware)
-    if (!req.user) {
-      return next(errorHandler(401, "Please login to upload profile picture"));
-    }
-
-    // Check if file was uploaded
-    if (!req.file) {
-      return next(errorHandler(400, "Please upload an image file"));
-    }
-
-    // Get the file path
-    const profileImageUrl = `/uploads/profiles/${req.file.filename}`;
-
-    // Update user's profile image
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { profileImageUrl },
-      { new: true }
-    );
-
-    if (!user) {
-      return next(errorHandler(404, "User not found"));
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Profile picture uploaded successfully",
-      profileImageUrl: user.profileImageUrl,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
 

@@ -9,7 +9,6 @@ import {
   verifyResetOtp,
   resetPassword,
   googleAuth,
-  uploadProfilePicture,
 } from "../controllers/authController.js";
 import { upload } from "../config/multerConfig.js";
 import { authenticate } from "../middleware/authenticate.js";
@@ -30,8 +29,5 @@ router.post("/resend-otp", resendSellerOtp);
 router.post("/forgot-password", forgotPassword);
 router.post("/verify-reset-otp", verifyResetOtp);
 router.post("/reset-password", resetPassword);
-
-// Profile picture upload (protected route)
-router.post("/upload-profile-picture", authenticate, upload.single("profilePicture"), uploadProfilePicture);
 
 export default router;

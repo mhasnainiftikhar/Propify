@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { uploadProfilePicture } from "../services/authService";
+import { uploadProfilePicture } from "../services/userService";
 
 const ProfilePictureUpload = ({ currentImage, onUploadSuccess }) => {
     const [image, setImage] = useState(currentImage || null);
@@ -93,10 +93,10 @@ const ProfilePictureUpload = ({ currentImage, onUploadSuccess }) => {
                     onClick={handleIconClick}
                     disabled={uploading}
                     className={`absolute bottom-0 right-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 ${uploading
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : image
-                                ? "bg-red-500 hover:bg-red-600"
-                                : "bg-blue-500 hover:bg-blue-600"
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : image
+                            ? "bg-red-500 hover:bg-red-600"
+                            : "bg-blue-500 hover:bg-blue-600"
                         }`}
                     title={image ? "Remove picture" : "Upload picture"}
                 >

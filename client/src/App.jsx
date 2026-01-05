@@ -9,6 +9,7 @@ import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import Layout from "./Layouts/Layout";
 import SellerDashboard from "./seller/Dashboard";
+import PrivateRoute from "./components/PrivateRoute";
 
 const App = () => {
   return (
@@ -19,7 +20,9 @@ const App = () => {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
         </Route>
 
         {/* Routes WITHOUT Header */}

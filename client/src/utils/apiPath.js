@@ -11,8 +11,10 @@ const API_PATHS = {
     FORGOT_PASSWORD: "/api/auth/forgot-password",
     VERIFY_RESET_OTP: "/api/auth/verify-reset-otp",
     RESET_PASSWORD: "/api/auth/reset-password",
-
-    UPLOAD_PROFILE_PICTURE: "/api/auth/upload-profile-picture",
+  },
+  USER: {
+    UPDATE_USER: "/api/user/update-user",
+    UPLOAD_PROFILE_PICTURE: "/api/user/upload-profile-picture",
   },
 };
 

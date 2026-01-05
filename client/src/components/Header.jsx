@@ -102,14 +102,18 @@ const Header = () => {
           </button>
 
           {/* User avatar */}
-          <div className="hidden md:block">
+          <Link to="/profile" className="hidden md:block">
             <img
-              src={currentUser?.profileImageUrl || currentUser?.photoURL || userAvatar}
+              src={
+                currentUser?.profileImageUrl
+                  ? (currentUser.profileImageUrl.startsWith('http') ? currentUser.profileImageUrl : `http://localhost:5000${currentUser.profileImageUrl}`)
+                  : userAvatar
+              }
               alt="User Avatar"
               className={`h-9 w-9 lg:h-10 lg:w-10 rounded-full border-2 shadow-sm cursor-pointer hover:scale-105 transition-transform duration-200 ${scrolled ? 'border-gray-200' : 'border-white/30'
                 }`}
             />
-          </div>
+          </Link>
 
           {/* Login/Logout Button */}
           {currentUser ? (

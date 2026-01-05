@@ -54,20 +54,3 @@ export const googleAuth = async (data) => {
   const res = await axiosInstance.post(API_PATHS.AUTH.GOOGLE_AUTH, data);
   return res.data;
 };
-
-// UPLOAD PROFILE PICTURE
-export const uploadProfilePicture = async (file) => {
-  const formData = new FormData();
-  formData.append("profilePicture", file);
-
-  const res = await axiosInstance.post(
-    API_PATHS.AUTH.UPLOAD_PROFILE_PICTURE,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
-  return res.data;
-};
