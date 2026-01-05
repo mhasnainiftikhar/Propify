@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/seller/dashboard" element={<SellerDashboard />} />
 
       </Routes>
+      <Toaster position="top-right" />
     </BrowserRouter>
   );
 };

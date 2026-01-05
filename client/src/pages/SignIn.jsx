@@ -6,6 +6,10 @@ import { loginUser } from "../services/authService";
 import assets from "../assets/cover3.jpg";
 import logo from "../assets/logo.png";
 import OAuth from "../components/OAuth";
+import OtpModal from "../components/OtpModal";
+import ResetPasswordModal from "../components/ResetPasswordModal";
+import { forgotPassword, verifyResetOtp, resetPassword } from "../services/authService";
+import { toast } from "react-hot-toast";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -13,6 +17,15 @@ const SignIn = () => {
   const { loading, error } = useSelector((state) => state.user);
 
   const [form, setForm] = useState({ email: "", password: "" });
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [resetPasswordState, setResetPasswordState] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,9 +34,72 @@ const SignIn = () => {
       const data = await loginUser(form);
       localStorage.setItem("token", data.token);
       dispatch(signInSuccess(data.user));
+      toast.success("Login successful!");
       navigate(data.user.role === "seller" ? "/seller/dashboard" : "/");
     } catch (err) {
-      dispatch(signInFailure(err?.response?.data?.message || "Invalid email or password"));
+      const errorMsg = err?.response?.data?.message || "Invalid email or password";
+      dispatch(signInFailure(errorMsg));
+      toast.error(errorMsg);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!form.email) {
+      setAuthError("Please enter your email first");
+      return;
+    }
+    setAuthLoading(true);
+    setAuthError("");
+    try {
+      await forgotPassword({ email: form.email });
+      setIsOtpModalOpen(true);
+      toast.success("OTP sent to your email");
+    } catch (err) {
+      setAuthError(err?.response?.data?.message || "Something went wrong");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    setAuthLoading(true);
+    setAuthError("");
+    try {
+      await verifyResetOtp({ email: form.email, otp });
+      setIsOtpModalOpen(false);
+      setIsResetModalOpen(true);
+      toast.success("OTP verified!");
+    } catch (err) {
+      const errorMsg = err?.response?.data?.message || "Invalid OTP";
+      setAuthError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (resetPasswordState.password !== resetPasswordState.confirmPassword) {
+      setAuthError("Passwords do not match");
+      return;
+    }
+    setAuthLoading(true);
+    setAuthError("");
+    try {
+      await resetPassword({
+        email: form.email,
+        otp,
+        password: resetPasswordState.password,
+      });
+      setIsResetModalOpen(false);
+      toast.success("Password reset successful. Please sign in.");
+      setForm({ ...form, password: "" });
+      setOtp("");
+      setResetPasswordState({ password: "", confirmPassword: "" });
+    } catch (err) {
+      setAuthError(err?.response?.data?.message || "Failed to reset password");
+    } finally {
+      setAuthLoading(false);
     }
   };
 
@@ -63,6 +139,12 @@ const SignIn = () => {
             </div>
           )}
 
+          {authError && !isOtpModalOpen && !isResetModalOpen && (
+            <div className="mb-6 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
+              {authError}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             <input
               type="email"
@@ -78,6 +160,16 @@ const SignIn = () => {
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
             />
+
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="text-sm font-medium text-blue-600 hover:text-blue-700 transition"
+              >
+                Forgot Password?
+              </button>
+            </div>
 
             <button
               type="submit"
@@ -116,6 +208,35 @@ const SignIn = () => {
           </p>
         </div>
       </div>
+
+      {isOtpModalOpen && (
+        <OtpModal
+          otp={otp}
+          setOtp={setOtp}
+          onVerify={handleVerifyOtp}
+          onResend={handleForgotPassword}
+          isLoading={authLoading}
+          error={authError}
+          onClose={() => setIsOtpModalOpen(false)}
+        />
+      )}
+
+      {isResetModalOpen && (
+        <ResetPasswordModal
+          password={resetPasswordState.password}
+          setPassword={(val) =>
+            setResetPasswordState({ ...resetPasswordState, password: val })
+          }
+          confirmPassword={resetPasswordState.confirmPassword}
+          setConfirmPassword={(val) =>
+            setResetPasswordState({ ...resetPasswordState, confirmPassword: val })
+          }
+          onReset={handleResetPassword}
+          isLoading={authLoading}
+          error={authError}
+          onClose={() => setIsResetModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

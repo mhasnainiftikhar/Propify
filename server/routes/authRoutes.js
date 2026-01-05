@@ -6,6 +6,7 @@ import {
   verifySellerOtp,
   resendSellerOtp,
   forgotPassword,
+  verifyResetOtp,
   resetPassword,
   googleAuth,
   uploadProfilePicture,
@@ -27,6 +28,7 @@ router.post("/resend-otp", resendSellerOtp);
 
 // Password reset
 router.post("/forgot-password", forgotPassword);
+router.post("/verify-reset-otp", verifyResetOtp);
 router.post("/reset-password", resetPassword);
 
 // Profile picture upload (protected route)

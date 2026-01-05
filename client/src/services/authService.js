@@ -37,6 +37,12 @@ export const forgotPassword = async (data) => {
   return res.data;
 };
 
+// VERIFY RESET OTP
+export const verifyResetOtp = async (data) => {
+  const res = await axiosInstance.post(API_PATHS.AUTH.VERIFY_RESET_OTP, data);
+  return res.data;
+};
+
 // RESET PASSWORD
 export const resetPassword = async (data) => {
   const res = await axiosInstance.post(API_PATHS.AUTH.RESET_PASSWORD, data);

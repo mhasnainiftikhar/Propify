@@ -8,6 +8,7 @@ import logo from "../assets/logo.png";
 import OAuth from "../components/OAuth";
 import OtpModal from "../components/OtpModal";
 import ProfilePictureUpload from "../components/ProfilePictureUpload";
+import { toast } from "react-hot-toast";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -45,14 +46,18 @@ const SignUp = () => {
       const data = await signupUser(form);
       if (form.role === "seller") {
         setShowOtp(true);
+        toast.success("OTP sent to your email!");
       } else {
         localStorage.setItem("token", data.token);
         dispatch(signInSuccess(data.user));
+        toast.success("Signup successful!");
         navigate("/");
       }
     } catch (err) {
-      dispatch(signInFailure(err?.response?.data?.message || "Signup failed"));
-      setErrors({ submit: err?.response?.data?.message || "Signup failed" });
+      const errorMsg = err?.response?.data?.message || "Signup failed";
+      dispatch(signInFailure(errorMsg));
+      setErrors({ submit: errorMsg });
+      toast.error(errorMsg);
     }
   };
 
@@ -62,15 +67,23 @@ const SignUp = () => {
       const data = await verifySellerOtp({ email: form.email, otp });
       localStorage.setItem("token", data.token);
       dispatch(signInSuccess(data.user));
+      toast.success("Account verified successfully!");
       navigate("/seller/dashboard");
     } catch (err) {
-      dispatch(signInFailure(err?.response?.data?.message || "Invalid or expired OTP"));
-      setErrors({ otp: "Invalid or expired OTP" });
+      const errorMsg = err?.response?.data?.message || "Invalid or expired OTP";
+      dispatch(signInFailure(errorMsg));
+      setErrors({ otp: errorMsg });
+      toast.error(errorMsg);
     }
   };
 
   const handleResendOtp = async () => {
-    await resendSellerOtp({ email: form.email });
+    try {
+      await resendSellerOtp({ email: form.email });
+      toast.success("OTP resent successfully!");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to resend OTP");
+    }
   };
 
   const handleGoogleOtpRequired = (email) => {
