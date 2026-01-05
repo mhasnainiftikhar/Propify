@@ -104,7 +104,7 @@ const Header = () => {
           {/* User avatar */}
           <div className="hidden md:block">
             <img
-              src={userAvatar}
+              src={currentUser?.profileImageUrl || currentUser?.photoURL || userAvatar}
               alt="User Avatar"
               className={`h-9 w-9 lg:h-10 lg:w-10 rounded-full border-2 shadow-sm cursor-pointer hover:scale-105 transition-transform duration-200 ${scrolled ? 'border-gray-200' : 'border-white/30'
                 }`}
@@ -116,8 +116,8 @@ const Header = () => {
             <button
               onClick={handleLogout}
               className={`px-4 lg:px-5 py-2 lg:py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-lg whitespace-nowrap ${scrolled
-                  ? 'bg-red-600 text-white hover:bg-red-700'
-                  : 'bg-white text-red-600 hover:bg-red-50'
+                ? 'bg-red-600 text-white hover:bg-red-700'
+                : 'bg-white text-red-600 hover:bg-red-50'
                 }`}
             >
               Logout
@@ -126,8 +126,8 @@ const Header = () => {
             <Link
               to="/sign-in"
               className={`px-4 lg:px-5 py-2 lg:py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-lg whitespace-nowrap ${scrolled
-                  ? 'bg-black text-white hover:bg-gray-800'
-                  : 'bg-white text-black hover:bg-gray-100'
+                ? 'bg-black text-white hover:bg-gray-800'
+                : 'bg-white text-black hover:bg-gray-100'
                 }`}
             >
               Sign In

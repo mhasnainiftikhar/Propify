@@ -81,6 +81,7 @@ export const signUpUser = async (req, res, next) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
+        profileImageUrl: user.profileImageUrl,
       },
     });
   } catch (err) {
@@ -116,6 +117,13 @@ export const verifySellerOtp = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Seller verified successfully",
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        profileImageUrl: user.profileImageUrl,
+      },
     });
   } catch (err) {
     next(err);
@@ -183,6 +191,7 @@ export const loginUser = async (req, res, next) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
+        profileImageUrl: user.profileImageUrl,
       },
     });
   } catch (err) {
@@ -378,6 +387,7 @@ export const googleAuth = async (req, res, next) => {
           email: user.email,
           role: user.role,
           photoURL: user.photoURL,
+          profileImageUrl: user.profileImageUrl,
         },
       });
     }
