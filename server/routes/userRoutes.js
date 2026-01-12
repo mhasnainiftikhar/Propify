@@ -2,6 +2,7 @@ import express from "express";
 import {
     uploadProfilePicture,
     updateUser,
+    getVerifiedSellers,
 } from "../controllers/userController.js";
 import { upload } from "../config/multerConfig.js";
 import { authenticate } from "../middleware/authenticate.js";
@@ -13,5 +14,8 @@ router.post("/upload-profile-picture", authenticate, upload.single("profilePictu
 
 // Update user (protected route)
 router.put("/update-user", authenticate, updateUser);
+
+// Get verified sellers (public route)
+router.get("/sellers", getVerifiedSellers);
 
 export default router;

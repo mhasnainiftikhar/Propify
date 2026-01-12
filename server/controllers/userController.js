@@ -1,4 +1,5 @@
 import User from "../models/userModel.js";
+import Listing from "../models/listingModel.js";
 import { errorHandler } from "../middleware/errorHandler.js";
 
 // UPLOAD PROFILE PICTURE
@@ -63,6 +64,28 @@ export const updateUser = async (req, res, next) => {
                 role: user.role,
                 profileImageUrl: user.profileImageUrl,
             },
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// GET VERIFIED SELLERS
+export const getVerifiedSellers = async (req, res, next) => {
+    try {
+        const sellers = await User.find({ role: 'seller' }).select('-password');
+
+        const sellersWithCounts = await Promise.all(sellers.map(async (seller) => {
+            const count = await Listing.countDocuments({ userRef: seller._id });
+            return {
+                ...seller._doc,
+                listingCount: count
+            };
+        }));
+
+        res.status(200).json({
+            success: true,
+            sellers: sellersWithCounts
         });
     } catch (err) {
         next(err);
