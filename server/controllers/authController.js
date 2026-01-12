@@ -21,6 +21,8 @@ const createToken = (res, user) => {
     secure: process.env.NODE_ENV === "production",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
+
+  return token;
 };
 
 
@@ -67,15 +69,24 @@ export const signUpUser = async (req, res, next) => {
         `Your OTP is ${verifyOtp}. It expires in 10 minutes.`
       );
     } else {
-      createToken(res, user);
+      const token = createToken(res, user);
+      return res.status(201).json({
+        success: true,
+        message: "Signup successful",
+        token,
+        user: {
+          id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          profileImageUrl: user.profileImageUrl,
+        },
+      });
     }
 
     res.status(201).json({
       success: true,
-      message:
-        role === "seller"
-          ? "Seller registered. OTP sent to email."
-          : "Signup successful",
+      message: "Seller registered. OTP sent to email.",
       user: {
         id: user._id,
         fullName: user.fullName,
@@ -101,7 +112,7 @@ export const verifySellerOtp = async (req, res, next) => {
 
     if (
       !user.verifyOtp ||
-      user.verifyOtp !== otp ||
+      String(user.verifyOtp) !== String(otp) ||
       user.verifyOtpExpireAt < Date.now()
     ) {
       return next(errorHandler(400, "Invalid or expired OTP"));
@@ -112,11 +123,12 @@ export const verifySellerOtp = async (req, res, next) => {
     user.verifyOtpExpireAt = null;
     await user.save();
 
-    createToken(res, user);
+    const token = createToken(res, user);
 
     res.status(200).json({
       success: true,
       message: "Seller verified successfully",
+      token,
       user: {
         id: user._id,
         fullName: user.fullName,
@@ -181,11 +193,12 @@ export const loginUser = async (req, res, next) => {
       return next(errorHandler(403, "Verify seller account first"));
     }
 
-    createToken(res, user);
+    const token = createToken(res, user);
 
     res.status(200).json({
       success: true,
       message: "Login successful",
+      token,
       user: {
         id: user._id,
         fullName: user.fullName,
@@ -328,11 +341,12 @@ export const googleAuth = async (req, res, next) => {
         await user.save();
       }
 
-      createToken(res, user);
+      const token = createToken(res, user);
 
       return res.status(200).json({
         success: true,
         message: "Login successful",
+        token,
         user: {
           id: user._id,
           fullName: user.fullName,
@@ -386,11 +400,12 @@ export const googleAuth = async (req, res, next) => {
         },
       });
     } else {
-      createToken(res, user);
+      const token = createToken(res, user);
 
       return res.status(201).json({
         success: true,
         message: "Signup successful",
+        token,
         user: {
           id: user._id,
           fullName: user.fullName,

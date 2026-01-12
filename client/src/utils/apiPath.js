@@ -16,6 +16,9 @@ const API_PATHS = {
     UPDATE_USER: "/api/user/update-user",
     UPLOAD_PROFILE_PICTURE: "/api/user/upload-profile-picture",
   },
+  LISTING: {
+    CREATE_LISTING: "/api/listing/create",
+  },
 };
 
 export default API_PATHS;

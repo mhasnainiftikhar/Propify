@@ -8,7 +8,7 @@ import logo from "../assets/logo.png";
 import OAuth from "../components/OAuth";
 import OtpModal from "../components/OtpModal";
 import ResetPasswordModal from "../components/ResetPasswordModal";
-import { forgotPassword, verifyResetOtp, resetPassword } from "../services/authService";
+import { forgotPassword, verifyResetOtp, resetPassword, verifySellerOtp, resendSellerOtp } from "../services/authService";
 import { toast } from "react-hot-toast";
 
 const SignIn = () => {
@@ -20,6 +20,7 @@ const SignIn = () => {
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [otp, setOtp] = useState("");
+  const [otpType, setOtpType] = useState("password_reset"); // 'password_reset' or 'seller_verification'
   const [resetPasswordState, setResetPasswordState] = useState({
     password: "",
     confirmPassword: "",
@@ -32,11 +33,20 @@ const SignIn = () => {
     dispatch(signInStart());
     try {
       const data = await loginUser(form);
-      localStorage.setItem("token", data.token);
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
       dispatch(signInSuccess(data.user));
       toast.success("Login successful!");
       navigate(data.user.role === "seller" ? "/seller/dashboard" : "/");
     } catch (err) {
+      if (err?.response?.status === 403 && err?.response?.data?.message === "Verify seller account first") {
+        setAuthError("");
+        setIsOtpModalOpen(true);
+        setOtpType("seller_verification");
+        toast.error("Please verify your account first. OTP sent to email.");
+        return;
+      }
       const errorMsg = err?.response?.data?.message || "Invalid email or password";
       dispatch(signInFailure(errorMsg));
       toast.error(errorMsg);
@@ -52,6 +62,7 @@ const SignIn = () => {
     setAuthError("");
     try {
       await forgotPassword({ email: form.email });
+      setOtpType("password_reset");
       setIsOtpModalOpen(true);
       toast.success("OTP sent to your email");
     } catch (err) {
@@ -65,6 +76,16 @@ const SignIn = () => {
     setAuthLoading(true);
     setAuthError("");
     try {
+      if (otpType === "seller_verification") {
+        const data = await verifySellerOtp({ email: form.email, otp });
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+        dispatch(signInSuccess(data.user));
+        toast.success("Account verified successfully!");
+        navigate("/seller/dashboard");
+        return;
+      }
       await verifyResetOtp({ email: form.email, otp });
       setIsOtpModalOpen(false);
       setIsResetModalOpen(true);
@@ -75,6 +96,19 @@ const SignIn = () => {
       toast.error(errorMsg);
     } finally {
       setAuthLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      if (otpType === "seller_verification") {
+        await resendSellerOtp({ email: form.email });
+      } else {
+        await forgotPassword({ email: form.email });
+      }
+      toast.success("OTP resent successfully!");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to resend OTP");
     }
   };
 
@@ -214,7 +248,7 @@ const SignIn = () => {
           otp={otp}
           setOtp={setOtp}
           onVerify={handleVerifyOtp}
-          onResend={handleForgotPassword}
+          onResend={handleResendOtp}
           isLoading={authLoading}
           error={authError}
           onClose={() => setIsOtpModalOpen(false)}

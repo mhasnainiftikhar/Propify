@@ -2,19 +2,34 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import fs from "fs";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Configure storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, "../uploads/profiles"));
+        let uploadPath = "../uploads";
+        if (file.fieldname === "profilePicture") {
+            uploadPath = "../uploads/profiles";
+        } else if (file.fieldname === "images") {
+            uploadPath = "../uploads/listings";
+        }
+        const fullPath = path.join(__dirname, uploadPath);
+
+        // Ensure directory exists
+        if (!fs.existsSync(fullPath)) {
+            fs.mkdirSync(fullPath, { recursive: true });
+        }
+
+        cb(null, fullPath);
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
         cb(
             null,
-            file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+            Date.now() + "-" + file.originalname
         );
     },
 });

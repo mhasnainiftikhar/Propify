@@ -15,6 +15,8 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["set-cookie"],
   })
 );
 
@@ -23,7 +25,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Serve static files for uploaded images
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads/profiles", express.static("uploads/profiles"));
+app.use("/uploads/listings", express.static("uploads/listings"));
 
 /* -------------------- DATABASE -------------------- */
 connectDB();

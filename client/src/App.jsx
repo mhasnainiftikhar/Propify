@@ -9,7 +9,9 @@ import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import Layout from "./Layouts/Layout";
 import SellerDashboard from "./seller/Dashboard";
+import CreateListing from "./pages/CreateListing";
 import PrivateRoute from "./components/PrivateRoute";
+import SellerRoute from "./components/SellerRoute";
 
 const App = () => {
   return (
@@ -23,12 +25,15 @@ const App = () => {
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
           </Route>
+          <Route element={<SellerRoute />}>
+            <Route path="/seller/dashboard" element={<SellerDashboard />} />
+            <Route path="/create-listing" element={<CreateListing />} />
+          </Route>
         </Route>
 
         {/* Routes WITHOUT Header */}
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/seller/dashboard" element={<SellerDashboard />} />
 
       </Routes>
       <Toaster position="top-right" />
