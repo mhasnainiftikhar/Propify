@@ -15,6 +15,7 @@ const __filename = fileURLToPath(import.meta.url);
 const _dirname = path.dirname(_filename);
 
 /* -------------------- MIDDLEWARE -------------------- */
+
 app.use(
   cors({
     origin:  "https://propify-frontend.vercel.app",
