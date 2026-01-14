@@ -36,6 +36,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/listing", listingRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Backend is running ");
+});
+
+
 /* -------------------- ERROR HANDLER -------------------- */
 app.use((err, req, res, next) => {
   console.error(err.stack);
