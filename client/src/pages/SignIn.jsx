@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice";
 import { loginUser } from "../services/authService";
 import assets from "../assets/cover3.jpg";
-import logo from "../assets/logo.png";
+import logo from "../assets/Logo.png";
 import OAuth from "../components/OAuth";
 import OtpModal from "../components/OtpModal";
 import ResetPasswordModal from "../components/ResetPasswordModal";
