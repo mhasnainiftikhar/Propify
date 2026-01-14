@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: ["http://localhost:5000","https://propify-backend-ten.vercel.app"],
+  baseURL: ["http://localhost:5000","https://propify-backend-ten.vercel.app/"],
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
