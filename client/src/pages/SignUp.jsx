@@ -13,7 +13,7 @@ import {
   resendSellerOtp,
 } from "../services/authService";
 import assets from "../assets/cover2.jpg";
-import logo from "../assets/logo.png";
+import logo from "../assets/Logo.png";
 import OAuth from "../components/OAuth";
 import OtpModal from "../components/OtpModal";
 import ProfilePictureUpload from "../components/ProfilePictureUpload";
