@@ -74,7 +74,7 @@ const Cards = () => {
                 <img
                   src={
                     listing.imageUrls[0]
-                      ? `http://localhost:5000${listing.imageUrls[0]}`
+                      ? `https://propify-backend-ten.vercel.app/${listing.imageUrls[0]}`
                       : "https://via.placeholder.com/400x300"
                   }
                   alt={listing.name}
