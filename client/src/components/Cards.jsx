@@ -62,7 +62,7 @@ const Cards = () => {
         </div>
 
         {/* Listings Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10">
           {listings.map((listing, index) => (
             <Link
               to={`/listing/${listing._id}`}
