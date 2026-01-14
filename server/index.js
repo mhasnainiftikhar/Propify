@@ -13,7 +13,7 @@ const app = express();
 /* -------------------- MIDDLEWARE -------------------- */
 app.use(
   cors({
-    origin: ["http://localhost:5173","https://propify-frontend.vercel.app/", "https://propify-frontend.vercel.app"],
+    origin:  "https://propify-frontend.vercel.app",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["set-cookie"],
