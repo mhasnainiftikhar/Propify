@@ -4,6 +4,7 @@ import { MapPin, DollarSign, Bed, Bath, Loader2, ArrowRight } from "lucide-react
 import { getAllListings } from "../services/listingService";
 import { toast } from "react-hot-toast";
 import { API_BASE_URL } from "../utils/axiosInstance";
+import { getImageUrl } from "../utils/imageUrl";
 
 const Cards = () => {
   const [listings, setListings] = useState([]);
@@ -73,11 +74,7 @@ const Cards = () => {
               {/* Image Container */}
               <div className="relative h-72 overflow-hidden">
                 <img
-                  src={
-                    listing.imageUrls[0]
-                      ? `${API_BASE_URL}${listing.imageUrls[0]}`
-                      : "https://via.placeholder.com/400x300"
-                  }
+                  src={getImageUrl(listing.imageUrls[0])}
                   alt={listing.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />

@@ -8,7 +8,7 @@ export const createListing = async (req, res, next) => {
             return next(errorHandler(400, "At least one image is required"));
         }
 
-        const imageUrls = req.files.map((file) => `/uploads/listings/${file.filename}`);
+        const imageUrls = req.files.map((file) => file.path);
 
         // Get userRef from authenticated user (not from request body)
         const listingData = {
@@ -164,7 +164,7 @@ export const updateListing = async (req, res, next) => {
     try {
         let imageUrls = listing.imageUrls;
         if (req.files && req.files.length > 0) {
-            imageUrls = req.files.map((file) => `/uploads/listings/${file.filename}`);
+            imageUrls = req.files.map((file) => file.path);
         }
 
         const updatedListing = await Listing.findByIdAndUpdate(

@@ -13,7 +13,7 @@ export const uploadProfilePicture = async (req, res, next) => {
             return next(errorHandler(400, "Please upload an image file"));
         }
 
-        const profileImageUrl = `/uploads/profiles/${req.file.filename}`;
+        const profileImageUrl = req.file.path;
 
         const user = await User.findByIdAndUpdate(
             req.user.id,
