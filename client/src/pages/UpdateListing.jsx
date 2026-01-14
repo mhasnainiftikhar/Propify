@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { getListing, updateListing } from "../services/listingService";
+import { API_BASE_URL } from "../utils/axiosInstance";
 
 const UpdateListing = () => {
     const { currentUser } = useSelector((state) => state.user);
@@ -300,7 +301,7 @@ const UpdateListing = () => {
                                 <p className="text-sm font-medium text-gray-700 mb-2">Existing Images:</p>
                                 <div className="flex flex-wrap gap-2">
                                     {formData.imageUrls.map((url, index) => (
-                                        <img key={index} src={`http://localhost:5000${url}`} alt="listing" className="w-20 h-20 object-cover rounded-lg border shadow-sm" />
+                                        <img key={index} src={`${API_BASE_URL}${url}`} alt="listing" className="w-20 h-20 object-cover rounded-lg border shadow-sm" />
                                     ))}
                                 </div>
                             </div>

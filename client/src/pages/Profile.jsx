@@ -8,6 +8,7 @@ import {
 import { updateUser, uploadProfilePicture } from "../services/userService";
 import { toast } from "react-hot-toast";
 import { Camera, Mail, User as UserIcon, Shield, Loader2 } from "lucide-react";
+import { API_BASE_URL } from "../utils/axiosInstance";
 
 const Profile = () => {
   const { currentUser, loading } = useSelector((state) => state.user);
@@ -82,7 +83,7 @@ const Profile = () => {
                 <img
                   src={
                     form.profileImageUrl
-                      ? (form.profileImageUrl.startsWith('http') ? form.profileImageUrl : `http://localhost:5000${form.profileImageUrl}`)
+                      ? (form.profileImageUrl.startsWith('http') ? form.profileImageUrl : `${API_BASE_URL}${form.profileImageUrl}`)
                       : "https://cdn-icons-png.flaticon.com/512/847/847969.png"
                   }
                   alt="Profile"

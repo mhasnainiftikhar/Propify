@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { MapPin, DollarSign, Bed, Bath, Loader2, ArrowRight } from "lucide-react";
 import { getAllListings } from "../services/listingService";
 import { toast } from "react-hot-toast";
+import { API_BASE_URL } from "../utils/axiosInstance";
 
 const Cards = () => {
   const [listings, setListings] = useState([]);
@@ -74,7 +75,7 @@ const Cards = () => {
                 <img
                   src={
                     listing.imageUrls[0]
-                      ? `https://propify-backend-ten.vercel.app${listing.imageUrls[0]}`
+                      ? `${API_BASE_URL}${listing.imageUrls[0]}`
                       : "https://via.placeholder.com/400x300"
                   }
                   alt={listing.name}

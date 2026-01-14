@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signOutStart, signOutSuccess, signOutFailure } from "../redux/user/userSlice";
 import logo from "../assets/Logo.png";
 import userAvatar from "../assets/User.png";
+import { API_BASE_URL } from "../utils/axiosInstance";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -170,7 +171,7 @@ const Header = () => {
             <img
               src={
                 currentUser?.profileImageUrl
-                  ? (currentUser.profileImageUrl.startsWith('http') ? currentUser.profileImageUrl : `http://localhost:5000${currentUser.profileImageUrl}`)
+                  ? (currentUser.profileImageUrl.startsWith('http') ? currentUser.profileImageUrl : `${API_BASE_URL}${currentUser.profileImageUrl}`)
                   : userAvatar
               }
               alt="User Avatar"

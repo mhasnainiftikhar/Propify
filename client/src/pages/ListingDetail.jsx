@@ -14,6 +14,7 @@ import {
 import { getListing } from "../services/listingService";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
+import { API_BASE_URL } from "../utils/axiosInstance";
 
 const ListingDetail = () => {
     const [listing, setListing] = useState(null);
@@ -89,7 +90,7 @@ const ListingDetail = () => {
                         <div className="bg-white p-2 rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                             <div className="relative aspect-video rounded-2xl overflow-hidden mb-4 bg-gray-100">
                                 <img
-                                    src={`https://propify-backend-ten.vercel.app${listing.imageUrls[activeImage]}`}
+                                    src={`${API_BASE_URL}${listing.imageUrls[activeImage]}`}
                                     alt={listing.name}
                                     className="w-full h-full object-cover transition-all duration-500"
                                 />
@@ -112,7 +113,7 @@ const ListingDetail = () => {
                                             className={`relative flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 transition-all ${activeImage === index ? "border-blue-600 scale-95" : "border-transparent opacity-70 hover:opacity-100"
                                                 }`}
                                         >
-                                            <img src={`http://localhost:5000${url}`} alt="" className="w-full h-full object-cover" />
+                                            <img src={`${API_BASE_URL}${url}`} alt="" className="w-full h-full object-cover" />
                                         </button>
                                     ))}
                                 </div>

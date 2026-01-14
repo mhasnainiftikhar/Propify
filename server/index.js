@@ -7,18 +7,18 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import listingRoutes from "./routes/listingRoutes.js";
 import path from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
-const _dirname = path.dirname(_filename);
+const __dirname = path.dirname(__filename);
 
 /* -------------------- MIDDLEWARE -------------------- */
 
 app.use(
   cors({
-    origin:  "https://propify-frontend.vercel.app",
+    origin: "https://propify-frontend.vercel.app",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["set-cookie"],

@@ -15,6 +15,7 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 import userAvatar from "../assets/User.png";
+import { API_BASE_URL } from "../utils/axiosInstance";
 
 const Community = () => {
     const [sellers, setSellers] = useState([]);
@@ -23,7 +24,7 @@ const Community = () => {
     useEffect(() => {
         const fetchSellers = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/user/sellers");
+                const res = await axios.get(`${API_BASE_URL}/api/user/sellers`);
                 if (res.data.success) {
                     setSellers(res.data.sellers);
                 }
@@ -130,7 +131,7 @@ const Community = () => {
                                 <div className="relative mb-8">
                                     <div className="w-28 h-28 rounded-full border-4 border-gray-50 shadow-lg overflow-hidden group-hover:scale-105 transition-transform duration-500">
                                         <img
-                                            src={seller.profileImageUrl?.startsWith('http') ? seller.profileImageUrl : `http://localhost:5000${seller.profileImageUrl || ""}` || userAvatar}
+                                            src={seller.profileImageUrl?.startsWith('http') ? seller.profileImageUrl : `${API_BASE_URL}${seller.profileImageUrl || ""}` || userAvatar}
                                             alt={seller.fullName}
                                             className="w-full h-full object-cover"
                                             onError={(e) => { e.target.src = userAvatar; }}

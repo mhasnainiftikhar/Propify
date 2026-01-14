@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Home, MapPin, DollarSign, Bed, Bath, Loader2, Plus, Edit, Trash2, Eye } from "lucide-react";
 import { getUserListings, deleteListing } from "../services/listingService";
 import { toast } from "react-hot-toast";
+import { API_BASE_URL } from "../utils/axiosInstance";
 
 const Properties = () => {
     const { currentUser } = useSelector((state) => state.user);
@@ -91,7 +92,7 @@ const Properties = () => {
                                 <img
                                     src={
                                         listing.imageUrls[0]
-                                            ? `http://localhost:5000${listing.imageUrls[0]}`
+                                            ? `${API_BASE_URL}${listing.imageUrls[0]}`
                                             : "https://via.placeholder.com/400x300"
                                     }
                                     alt={listing.name}
