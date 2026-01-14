@@ -89,7 +89,7 @@ const ListingDetail = () => {
                         <div className="bg-white p-2 rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                             <div className="relative aspect-video rounded-2xl overflow-hidden mb-4 bg-gray-100">
                                 <img
-                                    src={`http://localhost:5000${listing.imageUrls[activeImage]}`}
+                                    src={`https://propify-backend-ten.vercel.app${listing.imageUrls[activeImage]}`}
                                     alt={listing.name}
                                     className="w-full h-full object-cover transition-all duration-500"
                                 />

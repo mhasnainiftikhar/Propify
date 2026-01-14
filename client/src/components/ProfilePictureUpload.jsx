@@ -45,7 +45,7 @@ const ProfilePictureUpload = ({ currentImage, onUploadSuccess }) => {
             const data = await uploadProfilePicture(file);
 
             if (data.success) {
-                const imageUrl = `http://localhost:5000${data.profileImageUrl}`;
+                const imageUrl = `https://propify-backend-ten.vercel.app${data.profileImageUrl}`;
                 setImage(imageUrl);
 
                 if (onUploadSuccess) {
