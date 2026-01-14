@@ -6,9 +6,13 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import listingRoutes from "./routes/listingRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const _dirname = path.dirname(_filename);
 
 /* -------------------- MIDDLEWARE -------------------- */
 app.use(
@@ -25,8 +29,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Serve static files for uploaded images
-app.use("/uploads/profiles", express.static("uploads/profiles"));
-app.use("/uploads/listings", express.static("uploads/listings"));
+app.use("/uploads/profiles", express.static(path.join(__dirname, "uploads/profiles")));
+app.use("/uploads/listings", express.static(path.join(__dirname, "uploads/listings")));
 
 /* -------------------- DATABASE -------------------- */
 connectDB();
