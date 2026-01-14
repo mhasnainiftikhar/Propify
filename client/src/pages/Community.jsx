@@ -16,7 +16,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import userAvatar from "../assets/User.png";
 import { API_BASE_URL } from "../utils/axiosInstance";
-import { getImageUrl } from "../utils/imageUrl";
 
 const Community = () => {
     const [sellers, setSellers] = useState([]);
@@ -132,7 +131,7 @@ const Community = () => {
                                 <div className="relative mb-8">
                                     <div className="w-28 h-28 rounded-full border-4 border-gray-50 shadow-lg overflow-hidden group-hover:scale-105 transition-transform duration-500">
                                         <img
-                                            src={getImageUrl(seller.profileImageUrl)}
+                                            src={seller.profileImageUrl?.startsWith('http') ? seller.profileImageUrl : `${API_BASE_URL}${seller.profileImageUrl || ""}` || userAvatar}
                                             alt={seller.fullName}
                                             className="w-full h-full object-cover"
                                             onError={(e) => { e.target.src = userAvatar; }}

@@ -5,7 +5,6 @@ import { Home, MapPin, DollarSign, Bed, Bath, Loader2, Plus, Edit, Trash2, Eye }
 import { getUserListings, deleteListing } from "../services/listingService";
 import { toast } from "react-hot-toast";
 import { API_BASE_URL } from "../utils/axiosInstance";
-import { getImageUrl } from "../utils/imageUrl";
 
 const Properties = () => {
     const { currentUser } = useSelector((state) => state.user);
@@ -91,7 +90,11 @@ const Properties = () => {
                             {/* Image - Clickable and leads to details */}
                             <Link to={`/listing/${listing._id}`} className="relative h-48 block overflow-hidden">
                                 <img
-                                    src={getImageUrl(listing.imageUrls[0])}
+                                    src={
+                                        listing.imageUrls[0]
+                                            ? `${API_BASE_URL}${listing.imageUrls[0]}`
+                                            : "https://via.placeholder.com/400x300"
+                                    }
                                     alt={listing.name}
                                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                                 />

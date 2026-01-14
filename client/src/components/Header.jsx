@@ -5,7 +5,6 @@ import { signOutStart, signOutSuccess, signOutFailure } from "../redux/user/user
 import logo from "../assets/Logo.png";
 import userAvatar from "../assets/User.png";
 import { API_BASE_URL } from "../utils/axiosInstance";
-import { getImageUrl } from "../utils/imageUrl";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -170,7 +169,11 @@ const Header = () => {
           {/* User avatar */}
           <Link to="/profile" className="block">
             <img
-              src={getImageUrl(currentUser?.profileImageUrl)}
+              src={
+                currentUser?.profileImageUrl
+                  ? (currentUser.profileImageUrl.startsWith('http') ? currentUser.profileImageUrl : `${API_BASE_URL}${currentUser.profileImageUrl}`)
+                  : userAvatar
+              }
               alt="User Avatar"
               className={`h-8 w-8 lg:h-10 lg:w-10 rounded-full border-2 shadow-sm cursor-pointer hover:scale-105 transition-transform duration-200 ${scrolled || !isHome ? 'border-gray-200' : 'border-white/30'
                 }`}
